@@ -1,0 +1,31 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./symfony:/var/www/symfony
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ../../LAMP/Wordpress/cert:/etc/letsencrypt
+      - ./dev/.env.local:/var/www/symfony/.env.local
+  php:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./symfony:/var/www/symfony
+
+  bd:
+    image: mysql:latest
+    volumes:
+      - bd:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d/
+    environment:
+      - "MYSQL_ROOT_PASSWORD=abc123.."
+      - "MYSQL_DATABASE=database"
+      - "MYSQL_USER=user"
+      - "MYSQL_USER_PASSWORD=abc123.."
+volumes:
+    bd:
